@@ -1,42 +1,9 @@
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { Box, Button, Text, TextField, Image } from "@skynexui/components";
 import appConfig from "../config.json";
 
-const GlobalStyle = () => {
-	return (
-		<style global jsx>{`
-			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-				list-style: none;
-			}
-
-			body {
-				font-family: "Open Sans", sans-serif;
-			}
-
-			/* App fit Height */
-			html,
-			body,
-			#__next {
-				min-height: 100vh;
-				display: flex;
-				flex: 1;
-			}
-
-			#__next {
-				flex: 1;
-			}
-			#__next > * {
-				flex: 1;
-			}
-
-			/* ./App fit Height */
-		`}</style>
-	);
-};
-
-const Titulo = (props) => {
+const Title = (props) => {
 	const Tag = props.tag || "h1";
 	return (
 		<>
@@ -53,11 +20,11 @@ const Titulo = (props) => {
 };
 
 export default function PaginaInicial() {
-	const username = "CauaRodrigues";
+	const [username, setUsername] = useState("CauaRodrigues");
+	const roteamento = useRouter();
 
 	return (
 		<>
-			<GlobalStyle />
 			<Box
 				styleSheet={{
 					display: "flex",
@@ -91,6 +58,11 @@ export default function PaginaInicial() {
 					{/* Formulário */}
 					<Box
 						as="form"
+						onSubmit={(event) => {
+							event.preventDefault();
+							console.log(event);
+							roteamento.push("/chat");
+						}}
 						styleSheet={{
 							display: "flex",
 							flexDirection: "column",
@@ -101,7 +73,7 @@ export default function PaginaInicial() {
 							marginBottom: "32px",
 						}}
 					>
-						<Titulo tag="h2">Welcome to back!</Titulo>
+						<Title tag="h2">Welcome to back!</Title>
 						<Text
 							variant="body3"
 							styleSheet={{
@@ -113,7 +85,11 @@ export default function PaginaInicial() {
 						</Text>
 
 						<TextField
+							value={username}
 							fullWidth
+							onChange={(event) => {
+								setUsername(event.target.value);
+							}}
 							textFieldColors={{
 								neutral: {
 									textColor: appConfig.theme.colors.neutrals[200],
@@ -145,8 +121,9 @@ export default function PaginaInicial() {
 							display: "flex",
 							flexDirection: "column",
 							alignItems: "center",
-							maxWidth: "250px",
+							maxWidth: "200px",
 							padding: "16px",
+							margin: "0 12px",
 							backgroundColor: appConfig.theme.colors.neutrals[800],
 							border: "2px solid",
 							borderColor: appConfig.theme.colors.neutrals["000"],
