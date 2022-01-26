@@ -28,7 +28,8 @@
 				"900": "#101418",
 				"950": "#0F0F0F",
 				"999": "#080A0C",
-				"full_black": "#000"
+				"full_black": "#000",
+				"transparent": "transparent"
 			}
 		}
 	},

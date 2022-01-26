@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import api from "../service/api";
 import { useRouter } from "next/router";
 import { Box, Button, Text, TextField, Image } from "@skynexui/components";
 import appConfig from "../config.json";
@@ -20,8 +21,31 @@ const Title = (props) => {
 };
 
 export default function PaginaInicial() {
-	const [username, setUsername] = useState("CauaRodrigues");
+	const [username, setUsername] = useState("");
+	const defaultProfileImage =
+		"https://i.pinimg.com/564x/2c/4b/0e/2c4b0e84ae36cd3524bc4bd2ce671ebf.jpg";
+
 	const roteamento = useRouter();
+
+	// const loadProfile = async () => {
+	// 	if (!!username) {
+	// 		try {
+	// const response = await api.get(`/${username}`);
+	// 			setUsername(response.data.login);
+	// 		} catch (err) {}
+	// 	}
+	// };
+
+	// useEffect(() => {
+	// 	loadProfile();
+	// 	console.log(username);
+	// }, [username]);
+
+	const handleProfileImage = () => {
+		// username.length > 2
+		// 	? `https://github.com/${username}.png`
+		// 	: defaultProfileImage
+	};
 
 	return (
 		<>
@@ -47,7 +71,7 @@ export default function PaginaInicial() {
 							sm: "row",
 						},
 						width: "100%",
-						maxWidth: "700px",
+						maxWidth: "800px",
 						borderRadius: "5px",
 						padding: "32px",
 						margin: "16px",
@@ -68,7 +92,7 @@ export default function PaginaInicial() {
 							flexDirection: "column",
 							alignItems: "center",
 							justifyContent: "center",
-							width: { xs: "100%", sm: "50%" },
+							width: { xs: "100%", sm: "55%" },
 							textAlign: "center",
 							marginBottom: "32px",
 						}}
@@ -87,6 +111,7 @@ export default function PaginaInicial() {
 						<TextField
 							value={username}
 							fullWidth
+							autoComplete="off"
 							onChange={(event) => {
 								setUsername(event.target.value);
 							}}
@@ -102,6 +127,7 @@ export default function PaginaInicial() {
 							placeholder="Account GitHub"
 						/>
 						<Button
+							disabled={username.length < 2}
 							type="submit"
 							label="Log in"
 							fullWidth
@@ -121,7 +147,7 @@ export default function PaginaInicial() {
 							display: "flex",
 							flexDirection: "column",
 							alignItems: "center",
-							maxWidth: "200px",
+							maxWidth: "250px",
 							padding: "16px",
 							margin: "0 12px",
 							backgroundColor: appConfig.theme.colors.neutrals[800],
@@ -137,7 +163,14 @@ export default function PaginaInicial() {
 								borderRadius: "50%",
 								marginBottom: "16px",
 							}}
-							src={`https://github.com/${username}.png`}
+							src={
+								username.length > 2
+									? `https://github.com/${username}.png`
+									: defaultProfileImage
+							}
+							onError={(err) => {
+								err.target.src = `${defaultProfileImage}`;
+							}}
 						/>
 						<Text
 							variant="body4"
