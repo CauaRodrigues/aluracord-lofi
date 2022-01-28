@@ -22,30 +22,31 @@ const Title = (props) => {
 
 export default function PaginaInicial() {
 	const [username, setUsername] = useState("");
+	const [followers, setFollowers] = useState(0);
+	const [following, setFollowing] = useState(0);
 	const defaultProfileImage =
 		"https://i.pinimg.com/564x/2c/4b/0e/2c4b0e84ae36cd3524bc4bd2ce671ebf.jpg";
-
 	const roteamento = useRouter();
 
-	// const loadProfile = async () => {
-	// 	if (!!username) {
-	// 		try {
-	// const response = await api.get(`/${username}`);
-	// 			setUsername(response.data.login);
-	// 		} catch (err) {}
-	// 	}
-	// };
-
-	// useEffect(() => {
-	// 	loadProfile();
-	// 	console.log(username);
-	// }, [username]);
-
-	const handleProfileImage = () => {
-		// username.length > 2
-		// 	? `https://github.com/${username}.png`
-		// 	: defaultProfileImage
+	const searchUser = () => {
+		if (username != "") {
+			api
+				.get(`/${username}`)
+				.then((response) => {
+					if (response.data) {
+						let followersFromResponse = response.data.followers;
+						let followingFromResponse = response.data.following;
+						setFollowers(followersFromResponse);
+						setFollowing(followingFromResponse);
+					}
+				})
+				.catch((err) => {});
+		}
 	};
+
+	useEffect(() => {
+		searchUser();
+	}, [username]);
 
 	return (
 		<>
@@ -71,7 +72,8 @@ export default function PaginaInicial() {
 							sm: "row",
 						},
 						width: "100%",
-						maxWidth: "800px",
+						maxWidth: "900px",
+						height: "max-content",
 						borderRadius: "5px",
 						padding: "32px",
 						margin: "16px",
@@ -92,7 +94,7 @@ export default function PaginaInicial() {
 							flexDirection: "column",
 							alignItems: "center",
 							justifyContent: "center",
-							width: { xs: "100%", sm: "55%" },
+							width: { xs: "100%", sm: "50%" },
 							textAlign: "center",
 							marginBottom: "32px",
 						}}
@@ -147,7 +149,8 @@ export default function PaginaInicial() {
 							display: "flex",
 							flexDirection: "column",
 							alignItems: "center",
-							maxWidth: "250px",
+							maxWidth: "320px",
+							height: "420px",
 							padding: "16px",
 							margin: "0 12px",
 							backgroundColor: appConfig.theme.colors.neutrals[800],
@@ -155,7 +158,6 @@ export default function PaginaInicial() {
 							borderColor: appConfig.theme.colors.neutrals["000"],
 							borderRadius: "10px",
 							flex: 1,
-							minHeight: "240px",
 						}}
 					>
 						<Image
@@ -172,6 +174,7 @@ export default function PaginaInicial() {
 								err.target.src = `${defaultProfileImage}`;
 							}}
 						/>
+
 						<Text
 							variant="body4"
 							styleSheet={{
@@ -179,9 +182,37 @@ export default function PaginaInicial() {
 								backgroundColor: appConfig.theme.colors.neutrals[200],
 								padding: "3px 10px",
 								borderRadius: "1000px",
+								fontWeight: "700",
 							}}
 						>
-							{username}
+							{username ? username : "user"}
+						</Text>
+
+						<Text
+							variant="body4"
+							styleSheet={{
+								color: appConfig.theme.colors.neutrals["full_black"],
+								backgroundColor: appConfig.theme.colors.neutrals[200],
+								padding: "3px 10px",
+								borderRadius: "1000px",
+								margin: "5px 0",
+								fontWeight: "700",
+							}}
+						>
+							{!username ? "Followers" : `Followers: ${followers}`}
+						</Text>
+
+						<Text
+							variant="body4"
+							styleSheet={{
+								color: appConfig.theme.colors.neutrals["full_black"],
+								backgroundColor: appConfig.theme.colors.neutrals[200],
+								padding: "3px 10px",
+								borderRadius: "1000px",
+								fontWeight: "700",
+							}}
+						>
+							{!username ? "Following" : `Following: ${following}`}
 						</Text>
 					</Box>
 					{/* Photo Area */}
