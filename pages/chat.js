@@ -1,35 +1,71 @@
 import { Box, Text, TextField, Image, Button } from "@skynexui/components";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import appConfig from "../config.json";
+import { ButtonSendSticker } from "../src/components/ButtonSendSticker";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseClient = createClient(
+	process.env.SUPABASE_URL,
+	process.env.SUPABASE_KEY
+);
+
+const listenMessages = (addMessage) => {
+	return supabaseClient
+		.from("messages")
+		.on("INSERT", (response) => {
+			addMessage(response.new);
+		})
+		.subscribe();
+};
 
 export default function ChatPage() {
-	// Sua lógica vai aqui
+	const roteamento = useRouter();
+	const usuarioLogado = roteamento.query.username;
 	const [mensagem, setMensagem] = useState("");
 	const [messageList, setMessageList] = useState([]);
 
-	const handleNewMessage = (e, newMessage) => {
+	useEffect(() => {
+		supabaseClient
+			.from("messages")
+			.select("*")
+			.order("id", { ascending: false })
+			.then(({ data }) => {
+				setMessageList(data);
+			});
+
+		const subscription = listenMessages((newMessage) => {
+			setMessageList((value) => {
+				return [newMessage, ...value];
+			});
+		});
+
+		return () => {
+			subscription.unsubscribe();
+		};
+	}, []);
+
+	const handleNewMessage = (newMessage) => {
 		const message = {
-			id: messageList.length + 1,
-			from: "CauaRodrigues",
-			content: newMessage,
+			de: usuarioLogado,
+			texto: newMessage,
 		};
 
-		if (e.key === "Enter") {
-			e.preventDefault();
-			setMessageList([message, ...messageList]);
-			setMensagem("");
-		}
+		supabaseClient
+			.from("messages")
+			.insert([message])
+			.then(({ data }) => {});
+
+		setMensagem("");
 	};
 
-	// ./Sua lógica vai aqui
 	return (
 		<Box
 			styleSheet={{
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				backgroundColor: appConfig.theme.colors.primary[500],
-				backgroundImage: `url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)`,
+				backgroundImage: `url(https://cutt.ly/UOfACRF)`,
 				backgroundRepeat: "no-repeat",
 				backgroundSize: "cover",
 				backgroundBlendMode: "multiply",
@@ -43,9 +79,9 @@ export default function ChatPage() {
 					flex: 1,
 					boxShadow: "0 2px 10px 0 rgb(0 0 0 / 20%)",
 					borderRadius: "5px",
-					backgroundColor: appConfig.theme.colors.neutrals[700],
+					backgroundColor: appConfig.theme.colors.neutrals[999],
 					height: "100%",
-					maxWidth: "95%",
+					maxWidth: "80%",
 					maxHeight: "95vh",
 					padding: "32px",
 				}}
@@ -57,7 +93,7 @@ export default function ChatPage() {
 						display: "flex",
 						flex: 1,
 						height: "80%",
-						backgroundColor: appConfig.theme.colors.neutrals[600],
+						backgroundColor: appConfig.theme.colors.neutrals[900],
 						flexDirection: "column",
 						borderRadius: "5px",
 						padding: "16px",
@@ -78,7 +114,10 @@ export default function ChatPage() {
 								setMensagem(event.target.value);
 							}}
 							onKeyPress={(event) => {
-								handleNewMessage(event, mensagem);
+								if (event.key === "Enter") {
+									handleNewMessage(mensagem);
+									event.preventDefault();
+								}
 							}}
 							placeholder="Insira sua mensagem aqui..."
 							type="textarea"
@@ -88,9 +127,14 @@ export default function ChatPage() {
 								resize: "none",
 								borderRadius: "5px",
 								padding: "6px 8px",
-								backgroundColor: appConfig.theme.colors.neutrals[800],
+								backgroundColor: appConfig.theme.colors.neutrals[999],
 								marginRight: "12px",
 								color: appConfig.theme.colors.neutrals[200],
+							}}
+						/>
+						<ButtonSendSticker
+							onStickerClick={(sticker) => {
+								handleNewMessage(`:sticker: ${sticker}`);
 							}}
 						/>
 					</Box>
@@ -125,7 +169,6 @@ function Header() {
 }
 
 function MessageList(props) {
-	console.log(props.messages);
 	return (
 		<Box
 			tag="ul"
@@ -166,9 +209,9 @@ function MessageList(props) {
 									display: "inline-block",
 									marginRight: "8px",
 								}}
-								src={`https://github.com/vanessametonini.png`}
+								src={`https://github.com/${mensagem.de}.png`}
 							/>
-							<Text tag="strong">{mensagem.from}</Text>
+							<Text tag="strong">{mensagem.de}</Text>
 							<Text
 								styleSheet={{
 									fontSize: "10px",
@@ -180,7 +223,11 @@ function MessageList(props) {
 								{new Date().toLocaleDateString()}
 							</Text>
 						</Box>
-						{mensagem.content}
+						{mensagem.texto.startsWith(":sticker:") ? (
+							<Image src={mensagem.texto.replace(":sticker:", "")} />
+						) : (
+							mensagem.texto
+						)}
 					</Text>
 				);
 			})}

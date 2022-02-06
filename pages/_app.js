@@ -28,6 +28,10 @@ const GlobalStyle = () => {
 				flex: 1;
 			}
 
+			::-webkit-scrollbar {
+				visibility: hidden;
+			}
+
 			/* ./App fit Height */
 		`}</style>
 	);

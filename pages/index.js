@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import api from "../service/api";
+import api from "../src/service/api";
 import { useRouter } from "next/router";
 import { Box, Button, Text, TextField, Image } from "@skynexui/components";
 import appConfig from "../config.json";
@@ -22,31 +22,9 @@ const Title = (props) => {
 
 export default function PaginaInicial() {
 	const [username, setUsername] = useState("");
-	const [followers, setFollowers] = useState(0);
-	const [following, setFollowing] = useState(0);
 	const defaultProfileImage =
 		"https://i.pinimg.com/564x/2c/4b/0e/2c4b0e84ae36cd3524bc4bd2ce671ebf.jpg";
 	const roteamento = useRouter();
-
-	const searchUser = () => {
-		if (username != "") {
-			api
-				.get(`/${username}`)
-				.then((response) => {
-					if (response.data) {
-						let followersFromResponse = response.data.followers;
-						let followingFromResponse = response.data.following;
-						setFollowers(followersFromResponse);
-						setFollowing(followingFromResponse);
-					}
-				})
-				.catch((err) => {});
-		}
-	};
-
-	useEffect(() => {
-		searchUser();
-	}, [username]);
 
 	return (
 		<>
@@ -56,7 +34,7 @@ export default function PaginaInicial() {
 					alignItems: "center",
 					justifyContent: "center",
 					backgroundImage:
-						"url(https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapercave.com%2Fwp%2Fwp3826700.jpg&f=1&nofb=1)",
+						"url(https://external-content.duckduckgo.com/iu/?u=https://wallpapercave.com/wp/wp3826700.jpg)",
 					backgroundRepeat: "no-repeat",
 					backgroundSize: "cover",
 					backgroundBlendMode: "multiply",
@@ -86,8 +64,7 @@ export default function PaginaInicial() {
 						as="form"
 						onSubmit={(event) => {
 							event.preventDefault();
-							console.log(event);
-							roteamento.push("/chat");
+							roteamento.push(`/chat?username=${username}`);
 						}}
 						styleSheet={{
 							display: "flex",
@@ -186,33 +163,6 @@ export default function PaginaInicial() {
 							}}
 						>
 							{username ? username : "user"}
-						</Text>
-
-						<Text
-							variant="body4"
-							styleSheet={{
-								color: appConfig.theme.colors.neutrals["full_black"],
-								backgroundColor: appConfig.theme.colors.neutrals[200],
-								padding: "3px 10px",
-								borderRadius: "1000px",
-								margin: "5px 0",
-								fontWeight: "700",
-							}}
-						>
-							{!username ? "Followers" : `Followers: ${followers}`}
-						</Text>
-
-						<Text
-							variant="body4"
-							styleSheet={{
-								color: appConfig.theme.colors.neutrals["full_black"],
-								backgroundColor: appConfig.theme.colors.neutrals[200],
-								padding: "3px 10px",
-								borderRadius: "1000px",
-								fontWeight: "700",
-							}}
-						>
-							{!username ? "Following" : `Following: ${following}`}
 						</Text>
 					</Box>
 					{/* Photo Area */}
