@@ -1,47 +1,32 @@
-const GlobalStyle = () => {
-	return (
-		<style global jsx>{`
-			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-				list-style: none;
-			}
+import { Box } from "@skynexui/components";
+import Head from "next/head";
+import "../styles/global.css";
 
-			body {
-				font-family: "Open Sans", sans-serif;
-			}
-
-			/* App fit Height */
-			html,
-			body,
-			#__next {
-				min-height: 100vh;
-				display: flex;
-				flex: 1;
-			}
-
-			#__next {
-				flex: 1;
-			}
-			#__next > * {
-				flex: 1;
-			}
-
-			::-webkit-scrollbar {
-				visibility: hidden;
-			}
-
-			/* ./App fit Height */
-		`}</style>
-	);
-};
-
-export default function CustomApp({ Component, pageProps }) {
+export default function App({ Component, pageProps }) {
 	return (
 		<>
-			<GlobalStyle />
-			<Component {...pageProps} />
+			<Head>
+				<title>Aluracord Lofi</title>
+				<meta charSet="utf-8" />
+				<mata
+					name="viewport"
+					content="initical-scale=1.0, width=device-width"
+				/>
+			</Head>
+			<Box
+				styleSheet={{
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					backgroundImage:
+						"url(https://external-content.duckduckgo.com/iu/?u=https://wallpapercave.com/wp/wp3826700.jpg)",
+					backgroundRepeat: "no-repeat",
+					backgroundSize: "cover",
+					backgroundBlendMode: "multiply",
+				}}
+			>
+				<Component {...pageProps} />
+			</Box>
 		</>
 	);
 }

@@ -63,81 +63,68 @@ export default function ChatPage() {
 		<Box
 			styleSheet={{
 				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
-				backgroundImage: `url(https://cutt.ly/UOfACRF)`,
-				backgroundRepeat: "no-repeat",
-				backgroundSize: "cover",
-				backgroundBlendMode: "multiply",
-				color: appConfig.theme.colors.neutrals["000"],
+				flexDirection: "column",
+				flex: 1,
+				boxShadow: "0 2px 10px 0 rgb(0 0 0 / 20%)",
+				borderRadius: "5px",
+				backgroundColor: appConfig.theme.colors.neutrals[999],
+				height: "100%",
+				maxWidth: "80%",
+				maxHeight: "95vh",
+				padding: "32px",
 			}}
 		>
+			<Header />
 			<Box
 				styleSheet={{
+					position: "relative",
 					display: "flex",
-					flexDirection: "column",
 					flex: 1,
-					boxShadow: "0 2px 10px 0 rgb(0 0 0 / 20%)",
+					height: "80%",
+					backgroundColor: appConfig.theme.colors.neutrals[900],
+					flexDirection: "column",
 					borderRadius: "5px",
-					backgroundColor: appConfig.theme.colors.neutrals[999],
-					height: "100%",
-					maxWidth: "80%",
-					maxHeight: "95vh",
-					padding: "32px",
+					padding: "16px",
 				}}
 			>
-				<Header />
+				<MessageList messages={messageList} />
+
 				<Box
+					as="form"
 					styleSheet={{
-						position: "relative",
 						display: "flex",
-						flex: 1,
-						height: "80%",
-						backgroundColor: appConfig.theme.colors.neutrals[900],
-						flexDirection: "column",
-						borderRadius: "5px",
-						padding: "16px",
+						alignItems: "center",
 					}}
 				>
-					<MessageList messages={messageList} />
-
-					<Box
-						as="form"
-						styleSheet={{
-							display: "flex",
-							alignItems: "center",
+					<TextField
+						value={mensagem}
+						onChange={(event) => {
+							setMensagem(event.target.value);
 						}}
-					>
-						<TextField
-							value={mensagem}
-							onChange={(event) => {
-								setMensagem(event.target.value);
-							}}
-							onKeyPress={(event) => {
-								if (event.key === "Enter") {
-									handleNewMessage(mensagem);
-									event.preventDefault();
-								}
-							}}
-							placeholder="Insira sua mensagem aqui..."
-							type="textarea"
-							styleSheet={{
-								width: "100%",
-								border: "0",
-								resize: "none",
-								borderRadius: "5px",
-								padding: "6px 8px",
-								backgroundColor: appConfig.theme.colors.neutrals[999],
-								marginRight: "12px",
-								color: appConfig.theme.colors.neutrals[200],
-							}}
-						/>
-						<ButtonSendSticker
-							onStickerClick={(sticker) => {
-								handleNewMessage(`:sticker: ${sticker}`);
-							}}
-						/>
-					</Box>
+						onKeyPress={(event) => {
+							if (event.key === "Enter") {
+								handleNewMessage(mensagem);
+								event.preventDefault();
+							}
+						}}
+						placeholder="Insira sua mensagem aqui..."
+						type="textarea"
+						styleSheet={{
+							width: "100%",
+							border: "0",
+							resize: "none",
+							borderRadius: "5px",
+							padding: "6px 8px",
+							backgroundColor: appConfig.theme.colors.neutrals[999],
+							marginRight: "12px",
+							color: appConfig.theme.colors.neutrals[200],
+						}}
+					/>
+					<ButtonSendSticker
+						onStickerClick={(sticker) => {
+							handleNewMessage(`:sticker: ${sticker}`);
+						}}
+					/>
 				</Box>
 			</Box>
 		</Box>
@@ -154,6 +141,7 @@ function Header() {
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "space-between",
+					color: appConfig.theme.colors.neutrals["050"],
 				}}
 			>
 				<Text variant="heading5">Chat</Text>
